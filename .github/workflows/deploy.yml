@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest   # ✅ This stays Ubuntu (GitHub runner)
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -21,7 +21,6 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        working-directory: backend
         run: mvn clean package -DskipTests
 
       - name: Copy JAR to EC2
@@ -30,7 +29,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: /target/*.jar
+          source: target/*.jar
           target: /home/ec2-user/app
 
       - name: Restart Application on EC2
@@ -43,3 +42,4 @@ jobs:
             mkdir -p /home/ec2-user/app
             sudo pkill -f '.jar' || true
             nohup java -jar /home/ec2-user/app/*.jar > /home/ec2-user/app/app.log 2>&1 &
+
