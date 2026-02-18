@@ -22,8 +22,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. Build the application
+      # 3. Build the application (inside backend folder)
       - name: Build with Maven
+        working-directory: backend
         run: mvn clean package -DskipTests
 
       # 4. Copy JAR file to EC2
@@ -33,7 +34,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "target/*.jar"
+          source: "backend/target/*.jar"
           target: "/home/ec2-user/app"
 
       # 5. SSH into EC2 and restart application
